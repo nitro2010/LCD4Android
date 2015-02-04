@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LCD4Android</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="text_bluetooth_off">Bluetooth is Off</string>
+    <string name="text_bluetooth_on">Bluetooth is On</string>
+    <string name="text_enable">Enable</string>
+    <string name="text_disable">Disable</string>
+    <string name="text_view_paired">Paired Devices</string>
+    <string name="text_scan_devices">Scan Devices</string>
+    <string name="text_stop_scan">Scan Devices</string>
+    <string name="text_list_paired_devices">Paired Devices</string>
+    <string name="text_list_devices">List of Devices</string>
+    <string name="text_pair">Pair</string>
+	<string name="WAITING_FOR_DATA_FROM_BLUETOOTH_DEV">I am waiting for data from Bluetooth Device..</string>
+	<string name="CHOOSE_MAIN_CONNECTION_TYPE">Choose connection type</string>
+	<string name="server_www">Server WWW</string>
+	<string name="choose_bluetooth">Bluetooth</string>
+	<string name="change_url_to_server">Change URL to Server</string>
+	<string name="reload_page">Reload</string>
+	<string name="bt_conn_type">BT Connection type</string>
+	<string name="conn_secure">Secure connection</string>
+	<string name="conn_insecure">Insecure connection</string>
+	<string name="make_discoverable">Make discoverable</string>
+	<string name="pairing_devices">Pairing devices</string>
+	<string name="close_app">Close app</string>
+	<string name="ok">OK</string>
+	<string name="pair_text">Galaxy Nexus</string>
+	<string name="much_zeros">000000000</string>
+	<string name="updating">UPDATING..</string>
+	<string name="pairing">Pairing...</string>
+	<string name="paired">Paired</string>
+	<string name="unpaired">Unpaired</string>
+	<string name="type_url_to_new_server">Type a new URL Server</string>
+	<string name="scanning">Scanning...</string>
+	<string name="cancel">Cancel</string>
+	<string name="no_paired_devices_found">No Paired Devices Found</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/connection_type" android:checkable="false" android:title="@string/CHOOSE_MAIN_CONNECTION_TYPE">
+        <menu>
+            <item android:id="@+id/choose_server" android:title="@string/server_www"/>
+            <item android:id="@+id/choose_bluetooth" android:title="@string/choose_bluetooth" android:visible="false"/>
+        </menu>
+    </item>
+
+    <group android:id="@+id/internet_group" android:visible="false">
+      <item android:id="@+id/change_server" android:title="@string/change_url_to_server" android:visible="false"></item>      
+        
+    <item android:id="@+id/reload_page" android:title="@string/reload_page"></item></group>
+    <group android:id="@+id/bluetooth_group" android:visible="false">
+        <item android:id="@+id/connecton_type_bluetooth" android:title="@string/bt_conn_type">
+            <menu>
+                <item android:id="@+id/bluetooth_conn_secure" android:title="@string/conn_secure"/>
+                <item android:id="@+id/bluetooth_conn_insecure" android:title="@string/conn_insecure"/>
+            </menu>
+        </item>
+        <item android:id="@+id/discoverable" android:title="@string/make_discoverable"></item>
+        <item android:id="@+id/pairing" android:title="@string/pairing_devices"></item>
+    </group><item android:id="@+id/close_app" android:title="@string/close_app"></item>
+    
+    
+    
+    
+    
+    
+
+</menu>
