@@ -300,7 +300,7 @@ public class Main extends Activity {
 	{
 		Log.d("BluetoothListeningService", "LETSGO");
     	web.loadData(getResources().getString(R.string.WAITING_FOR_DATA_FROM_BLUETOOTH_DEV), "text/html", "utf-8");
-    	mBluetoothService = new BluetoothService(this, mHandler, mSecure);
+    	mBluetoothService = new BluetoothService(this, mHandler);
 	}
 
 	

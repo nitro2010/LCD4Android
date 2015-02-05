@@ -12,7 +12,7 @@
         
     <item android:id="@+id/reload_page" android:title="@string/reload_page"></item></group>
     <group android:id="@+id/bluetooth_group" android:visible="false">
-        <item android:id="@+id/connecton_type_bluetooth" android:title="@string/bt_conn_type">
+        <item android:id="@+id/connecton_type_bluetooth" android:title="@string/bt_conn_type" android:visible="false" android:enabled="false">
             <menu>
                 <item android:id="@+id/bluetooth_conn_secure" android:title="@string/conn_secure"/>
                 <item android:id="@+id/bluetooth_conn_insecure" android:title="@string/conn_insecure"/>
