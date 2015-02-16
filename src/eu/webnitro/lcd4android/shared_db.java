@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 public class shared_db {
-	private static int DB_VERSION = 1;
+	private static int DB_VERSION = 3;
 	static String PREFERENCES_NAME = "settings";
 	static SharedPreferences preferences;
 	
@@ -20,16 +20,6 @@ public class shared_db {
 		return preferences.getString(name, "");	
 	}
 	
-	private static void SharedDeleteData(String name)
-	{
-		try
-		{
-			SharedPreferences.Editor se = preferences.edit();
-			se.remove(name);
-			se.apply();	
-		}catch(Exception e){}
-	}	
-	
 	static void StartDatabase() {
 		//check DB version
 		String db_version = SharedLoadData("DB_VERSION");
@@ -41,9 +31,13 @@ public class shared_db {
 			SharedSaveData("DB_VERSION", dbv); 
 			SharedSaveData("TYPE_CONNECTION","1");
 			SharedSaveData("SERVER_URL","file:///android_asset/welcome.html");
-			SharedSaveData("BLUETOOTH_SECURE_CONNECTION","1");
+			SharedSaveData("BLUETOOTH_SECURE_CONNECTION","2");
+			SharedSaveData("USB_STORAGE", "/data/data/eu.webnitro.lcd4android/files");
+			
 			//DATA IN VERSION 2
-
+			SharedSaveData("USB_STORAGE", "/data/data/eu.webnitro.lcd4android/files");
+			
+			
 		}
 	
 		//updates and deletes from 2-x versions

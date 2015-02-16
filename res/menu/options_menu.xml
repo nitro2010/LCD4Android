@@ -4,6 +4,7 @@
         <menu>
             <item android:id="@+id/choose_server" android:title="@string/server_www"/>
             <item android:id="@+id/choose_bluetooth" android:title="@string/choose_bluetooth" android:visible="false"/>
+            <item android:id="@+id/choose_usb" android:title="@string/choose_usb"/>
         </menu>
     </item>
 
@@ -16,11 +17,18 @@
             <menu>
                 <item android:id="@+id/bluetooth_conn_secure" android:title="@string/conn_secure"/>
                 <item android:id="@+id/bluetooth_conn_insecure" android:title="@string/conn_insecure"/>
+                <item android:id="@+id/bluetooth_conn_both" android:title="@string/bluetooth_sec_insec"/>
             </menu>
         </item>
         <item android:id="@+id/discoverable" android:title="@string/make_discoverable"></item>
         <item android:id="@+id/pairing" android:title="@string/pairing_devices"></item>
+    </group><group android:id="@+id/usb_group" android:visible="false">
+        <item android:id="@+id/storage_web" android:title="@string/usb_choose_storage">
+            <menu>
+            </menu>
+        </item>
     </group><item android:id="@+id/close_app" android:title="@string/close_app"></item>
+    
     
     
     

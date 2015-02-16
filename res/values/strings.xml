@@ -35,4 +35,8 @@
 	<string name="scanning">Scanning...</string>
 	<string name="cancel">Cancel</string>
 	<string name="no_paired_devices_found">No Paired Devices Found</string>
+	<string name="bluetooth_sec_insec">Secure and insecure connection</string>
+	<string name="choose_usb">Choose USB</string>
+	<string name="WAITING_FOR_DATA_FROM_USB_DEV">Waiting for data from computer ...</string>
+	<string name="usb_choose_storage">USB: Choose Storage</string>
 </resources>

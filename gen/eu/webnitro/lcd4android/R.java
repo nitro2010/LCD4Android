@@ -21,25 +21,29 @@ public final class R {
     }
     public static final class id {
         public static final int alert_msg=0x7f090002;
-        public static final int bluetooth_conn_insecure=0x7f090011;
-        public static final int bluetooth_conn_secure=0x7f090010;
-        public static final int bluetooth_group=0x7f09000e;
+        public static final int bluetooth_conn_both=0x7f090013;
+        public static final int bluetooth_conn_insecure=0x7f090012;
+        public static final int bluetooth_conn_secure=0x7f090011;
+        public static final int bluetooth_group=0x7f09000f;
         public static final int btn_pair=0x7f090004;
         public static final int button_ok=0x7f090003;
-        public static final int change_server=0x7f09000c;
+        public static final int change_server=0x7f09000d;
         public static final int choose_bluetooth=0x7f09000a;
         public static final int choose_server=0x7f090009;
-        public static final int close_app=0x7f090014;
+        public static final int choose_usb=0x7f09000b;
+        public static final int close_app=0x7f090018;
         public static final int connection_type=0x7f090008;
-        public static final int connecton_type_bluetooth=0x7f09000f;
-        public static final int discoverable=0x7f090012;
-        public static final int internet_group=0x7f09000b;
+        public static final int connecton_type_bluetooth=0x7f090010;
+        public static final int discoverable=0x7f090014;
+        public static final int internet_group=0x7f09000c;
         public static final int log=0x7f090000;
         public static final int log_adapter=0x7f090001;
-        public static final int pairing=0x7f090013;
-        public static final int reload_page=0x7f09000d;
+        public static final int pairing=0x7f090015;
+        public static final int reload_page=0x7f09000e;
+        public static final int storage_web=0x7f090017;
         public static final int tv_address=0x7f090006;
         public static final int tv_name=0x7f090005;
+        public static final int usb_group=0x7f090016;
         public static final int web=0x7f090007;
     }
     public static final class layout {
@@ -57,11 +61,14 @@ public final class R {
     public static final class string {
         public static final int CHOOSE_MAIN_CONNECTION_TYPE=0x7f06000d;
         public static final int WAITING_FOR_DATA_FROM_BLUETOOTH_DEV=0x7f06000c;
+        public static final int WAITING_FOR_DATA_FROM_USB_DEV=0x7f060025;
         public static final int app_name=0x7f060000;
+        public static final int bluetooth_sec_insec=0x7f060023;
         public static final int bt_conn_type=0x7f060012;
         public static final int cancel=0x7f060021;
         public static final int change_url_to_server=0x7f060010;
         public static final int choose_bluetooth=0x7f06000f;
+        public static final int choose_usb=0x7f060024;
         public static final int close_app=0x7f060017;
         public static final int conn_insecure=0x7f060014;
         public static final int conn_secure=0x7f060013;
@@ -90,6 +97,7 @@ public final class R {
         public static final int type_url_to_new_server=0x7f06001f;
         public static final int unpaired=0x7f06001e;
         public static final int updating=0x7f06001b;
+        public static final int usb_choose_storage=0x7f060026;
     }
     public static final class style {
         /** 

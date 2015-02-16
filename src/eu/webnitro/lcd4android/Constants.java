@@ -33,5 +33,6 @@ public class Constants {
     public static final String DEVICE_NAME = "device_name";
     public static String TOAST = "toast";
     
-
+    public static int USB_PAGE = -1;
+    
 }

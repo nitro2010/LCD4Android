@@ -1,5 +1,6 @@
 package eu.webnitro.lcd4android;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -24,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -40,14 +43,17 @@ public class Main extends Activity {
 	//connection type: 1 - server, 2 - bluetooth
 	private int connection_type = 1;
 	private String url = "file:///android_asset/welcome.html";
+	private String usb_path = "";
 	private BluetoothAdapter mBluetoothAdapter = null;
 	private BluetoothService mBluetoothService = null;
 	private static final int REQUEST_ENABLE_BT = 3;
-	private boolean mSecure = true;
+	private int mSecure = 2;
 	// Name of the connected device
     private String mConnectedDeviceName = null;
 
 	boolean isplaying = false;
+	boolean USBListenServiceisrunning = false;
+	CountDownTimer usbservicetimer = null;
 	
 	private ArrayList<BluetoothDevice> mDeviceList = new ArrayList<BluetoothDevice>();
 
@@ -58,7 +64,14 @@ public class Main extends Activity {
 	
 	private ProgressDialog mProgressDlg;
 	
-
+	int menuitem = 10;
+	int menusize = 0;
+	
+	USBService tUSBService = null;
+	
+//	USBService tUSBService = null;
+	Thread tUSBListenService;
+	int USB_PAGE = -1;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +91,8 @@ public class Main extends Activity {
     	shared_db.StartDatabase();
     	connection_type = 	Integer.parseInt(shared_db.SharedLoadData("TYPE_CONNECTION"));
     	url = shared_db.SharedLoadData("SERVER_URL");
-    	mSecure = (shared_db.SharedLoadData("BLUETOOTH_SECURE_CONNECTION").contentEquals("1")) ? true : false;
+    	mSecure = Integer.parseInt(shared_db.SharedLoadData("BLUETOOTH_SECURE_CONNECTION"));
+    	usb_path = shared_db.SharedLoadData("USB_STORAGE");
     	web = (WebView) findViewById(R.id.web);
     	web.setVerticalScrollbarOverlay(false);
     	web.getSettings().setJavaScriptEnabled(true);
@@ -99,9 +113,10 @@ public class Main extends Activity {
     	dialog.setTitle(getResources().getString(R.string.type_url_to_new_server));
     	alert_msg = (EditText) dialog.findViewById(R.id.alert_msg);    	
     	mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    	if(!new File(usb_path).exists()) usb_path = getFilesDir().getAbsolutePath();
     	if(connection_type == 1){
         	web.loadUrl(url);
-    	}else{
+    	}else if(connection_type == 2){
     		if (mBluetoothAdapter == null) {
     			connection_type = 1;
 				shared_db.SharedSaveData("TYPE_CONNECTION","1"); 
@@ -114,6 +129,8 @@ public class Main extends Activity {
      			   BluetoothListeningService();
      		   }
   	        } 
+    	}else{
+    		USBListenService();
     	}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -137,14 +154,26 @@ public class Main extends Activity {
 		switch (item.getItemId()) {
 			case R.id.choose_server: {
 				connection_type = 1;
-				shared_db.SharedSaveData("TYPE_CONNECTION","1");
-				web.loadUrl(url);
 				if (mBluetoothService != null)
 					mBluetoothService.stop();
+				try {
+					if(usbservicetimer != null) {
+						usbservicetimer.cancel();
+						usbservicetimer = null;	
+					}
+				}catch(Exception e){}
+				shared_db.SharedSaveData("TYPE_CONNECTION","1");
+				web.loadUrl(url);
 			}
 			break;
 			case R.id.choose_bluetooth: {
 				connection_type = 2;
+				try {
+					if(usbservicetimer != null) {
+						usbservicetimer.cancel();
+						usbservicetimer = null;	
+					}
+				}catch(Exception e){}
 				shared_db.SharedSaveData("TYPE_CONNECTION","2");
 	    		if (mBluetoothAdapter == null) {
 	    			connection_type = 1;
@@ -180,6 +209,14 @@ public class Main extends Activity {
 				shared_db.SharedSaveData("SERVER_URL",url);
 			}			
 			break;		
+			
+			case R.id.choose_usb: {
+				connection_type = 3;
+				shared_db.SharedSaveData("TYPE_CONNECTION","3");
+				USBListenService();
+			}			
+			break;		
+			
 			case R.id.reload_page: 
 				web.reload();
 			break;		
@@ -188,7 +225,7 @@ public class Main extends Activity {
 				mBluetoothService.stop();
 				mBluetoothService = null;
 				shared_db.SharedSaveData("BLUETOOTH_SECURE_CONNECTION","0");
-				mSecure=false;	
+				mSecure=0;	
 				BluetoothListeningService();
 			}
 			break;
@@ -197,7 +234,16 @@ public class Main extends Activity {
 				mBluetoothService.stop();
 				mBluetoothService = null;
 				shared_db.SharedSaveData("BLUETOOTH_SECURE_CONNECTION","1");
-				mSecure=true;	
+				mSecure=1;	
+				BluetoothListeningService();
+			}
+			break;
+
+			case R.id.bluetooth_conn_both: {
+				mBluetoothService.stop();
+				mBluetoothService = null;
+				shared_db.SharedSaveData("BLUETOOTH_SECURE_CONNECTION","2");
+				mSecure=2;	
 				BluetoothListeningService();
 			}
 			break;
@@ -235,6 +281,12 @@ public class Main extends Activity {
 			}
 			break;
 		}
+		
+		if( ( item.getItemId() >= menuitem ) && ( item.getItemId() <= menuitem+menusize  ) ) {
+			usb_path = item.getTitle().toString();
+			shared_db.SharedSaveData("USB_STORAGE",usb_path);
+		 }
+		
 		return false;		
 	}
 
@@ -244,11 +296,38 @@ public class Main extends Activity {
 		{		
 			menu.setGroupVisible(R.id.internet_group, true);
 			menu.setGroupVisible(R.id.bluetooth_group, false);
+			menu.setGroupVisible(R.id.usb_group, false);			
 		}		
 		if(connection_type == 2)		
 		{	
 			menu.setGroupVisible(R.id.internet_group, false);	
 			menu.setGroupVisible(R.id.bluetooth_group, true);
+			menu.setGroupVisible(R.id.usb_group, false);
+		}	
+		if(connection_type == 3)		
+		{	
+			menu.setGroupVisible(R.id.internet_group, false);	
+			menu.setGroupVisible(R.id.bluetooth_group, false);
+			menu.setGroupVisible(R.id.usb_group, true);
+
+			
+	    	SubMenu m1 = menu.findItem(R.id.storage_web).getSubMenu();
+	    	m1.clear();
+	     	File filea = getFilesDir();
+			m1.add(Menu.NONE,menuitem,100,filea.getAbsolutePath().toString());
+			m1.getItem(0).setCheckable(true);
+			if(usb_path.contains(filea.getAbsolutePath().toString())) {
+				m1.getItem(0).setChecked(true);				
+			}
+			File[] file = getExternalFilesDirs(null);
+			for(int i=0;i<file.length;i++) {
+				m1.add(Menu.NONE,menuitem+i+1,100,file[i].getAbsolutePath().toString());
+				m1.getItem(i+1).setCheckable(true);
+				if(usb_path.contains(file[i].getAbsolutePath().toString())) {
+					m1.getItem(i+1).setChecked(true);
+				}
+			}
+			menusize = m1.size();
 		}	
     	if (mBluetoothAdapter != null) {
     		menu.findItem(R.id.choose_bluetooth).setVisible(true);
@@ -300,7 +379,46 @@ public class Main extends Activity {
 	{
 		Log.d("BluetoothListeningService", "LETSGO");
     	web.loadData(getResources().getString(R.string.WAITING_FOR_DATA_FROM_BLUETOOTH_DEV), "text/html", "utf-8");
-    	mBluetoothService = new BluetoothService(this, mHandler);
+    	mBluetoothService = new BluetoothService(this, mHandler, mSecure);
+	}
+	
+	private void USBListenService()
+	{
+		Log.d("USBListeningService", "LETSGO");
+		web.loadData(getResources().getString(R.string.WAITING_FOR_DATA_FROM_USB_DEV), "text/html", "utf-8");
+		try {
+			getFilesDir().mkdir();
+			new File(usb_path).mkdir();
+			new File(usb_path+"/0").mkdir();
+			new File(usb_path+"/1").mkdir();
+		}catch(Exception e) {}
+		
+		if(usbservicetimer == null) {
+			usbservicetimer = new CountDownTimer(5000, 1000) {
+				@Override
+				public void onTick(long millisUntilFinished) {}
+				@Override
+				public void onFinish() {
+					tUSBService = new USBService();
+					tUSBService.start();
+					synchronized (tUSBService) {
+						try {
+							tUSBService.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						if(USB_PAGE != Constants.USB_PAGE) {
+							USB_PAGE = Constants.USB_PAGE;
+							if(new File(usb_path + "/"+USB_PAGE+"/lcd4android.html").exists()) {
+								web.loadUrl(usb_path + "/"+USB_PAGE+"/lcd4android.html");
+							}
+						}
+					}
+					start();
+				}
+			};
+			usbservicetimer.start();
+		}
 	}
 
 	
@@ -355,9 +473,19 @@ public class Main extends Activity {
     	super.onDestroy();
 		shared_db.SharedSaveData("TYPE_CONNECTION",Integer.toString(connection_type));
 		shared_db.SharedSaveData("SERVER_URL",url);		
-		shared_db.SharedSaveData("BLUETOOTH_SECURE_CONNECTION",((mSecure)?"1":"0"));	
+		shared_db.SharedSaveData("BLUETOOTH_SECURE_CONNECTION",Integer.toString(mSecure));	
+		shared_db.SharedSaveData("USB_STORAGE", usb_path);
 		if (mBluetoothService != null)
 			mBluetoothService.stop(); 
+		try {
+			if(usbservicetimer != null) {
+				usbservicetimer.cancel();
+				usbservicetimer = null;	
+			}
+			if(connection_type == 3) {
+				new File("/data/data/eu.webnitro.lcd4android/files/lcd4android.page").delete();
+			}
+		}catch(Exception e){}		
 		unregisterReceiver(mReceiver);
     }
     

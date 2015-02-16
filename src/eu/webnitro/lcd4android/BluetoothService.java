@@ -35,6 +35,7 @@ public class BluetoothService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
+    private int mSecure;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE			= 0;	// we're doing nothing
@@ -42,7 +43,7 @@ public class BluetoothService {
     public static final int STATE_CONNECTING 	= 2; 	// now initiating an outgoing connection
     public static final int STATE_CONNECTED 	= 3;  	// now connected to a remote device
 
-    public BluetoothService(Context context, Handler handler) {
+    public BluetoothService(Context context, Handler handler, int mSecure) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
@@ -82,14 +83,29 @@ public class BluetoothService {
 
         setState(STATE_LISTEN);
 		// Start the thread to listen on a BluetoothServerSocket
-		if (mSecureAcceptThread == null) {
-			mSecureAcceptThread = new AcceptThread(true);
-			mSecureAcceptThread.start();
-		}   
-		if (mInsecureAcceptThread == null) {
-			mInsecureAcceptThread = new AcceptThread(false);
-			mInsecureAcceptThread.start();
-		}  
+        if(mSecure == 0) {
+			if (mInsecureAcceptThread == null) {
+				mInsecureAcceptThread = new AcceptThread(false);
+				mInsecureAcceptThread.start();
+			}
+        }
+        if(mSecure == 1) {
+			if (mSecureAcceptThread == null) {
+				mSecureAcceptThread = new AcceptThread(true);
+				mSecureAcceptThread.start();
+			} 
+        }
+        
+        if(mSecure == 2) {
+			if (mSecureAcceptThread == null) {
+				mSecureAcceptThread = new AcceptThread(true);
+				mSecureAcceptThread.start();
+			}   
+			if (mInsecureAcceptThread == null) {
+				mInsecureAcceptThread = new AcceptThread(false);
+				mInsecureAcceptThread.start();
+			} 
+        }
     }
 
     /**
