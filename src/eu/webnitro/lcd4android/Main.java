@@ -1,6 +1,12 @@
 package eu.webnitro.lcd4android;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -285,6 +291,9 @@ public class Main extends Activity {
 		if( ( item.getItemId() >= menuitem ) && ( item.getItemId() <= menuitem+menusize  ) ) {
 			usb_path = item.getTitle().toString();
 			shared_db.SharedSaveData("USB_STORAGE",usb_path);
+			new File(usb_path).mkdir();
+			new File(usb_path+"/0").mkdir();
+			new File(usb_path+"/1").mkdir();			
 		 }
 		
 		return false;		
@@ -404,14 +413,23 @@ public class Main extends Activity {
 					synchronized (tUSBService) {
 						try {
 							tUSBService.wait();
+							if(USB_PAGE != Constants.USB_PAGE) {
+								USB_PAGE = Constants.USB_PAGE;
+								if(new File(usb_path + "/"+USB_PAGE+"/lcd4android.html").exists()) {
+									BufferedReader usb_file = new BufferedReader(new FileReader("/storage/sdcard1/Android/data/eu.webnitro.lcd4android/files/0/lcd4android.html"));
+									StringBuffer stringBuffer = new StringBuffer(); 
+									String inputString;
+									while ((inputString = usb_file.readLine()) != null) {
+										stringBuffer.append(inputString + "\n");
+									}
+									usb_file.close();
+									web.loadData(stringBuffer.toString(), "text/html", "utf-8");						
+								}
+							}							
+						} catch (IOException e) {
+							e.printStackTrace();
 						} catch (InterruptedException e) {
 							e.printStackTrace();
-						}
-						if(USB_PAGE != Constants.USB_PAGE) {
-							USB_PAGE = Constants.USB_PAGE;
-							if(new File(usb_path + "/"+USB_PAGE+"/lcd4android.html").exists()) {
-								web.loadUrl(usb_path + "/"+USB_PAGE+"/lcd4android.html");
-							}
 						}
 					}
 					start();
