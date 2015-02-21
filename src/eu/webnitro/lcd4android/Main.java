@@ -293,7 +293,16 @@ public class Main extends Activity {
 			shared_db.SharedSaveData("USB_STORAGE",usb_path);
 			new File(usb_path).mkdir();
 			new File(usb_path+"/0").mkdir();
-			new File(usb_path+"/1").mkdir();			
+			new File(usb_path+"/1").mkdir();	
+			new File(usb_path).setExecutable(true,false);
+			new File(usb_path).setReadable(true,false);
+			new File(usb_path).setWritable(true,false);
+			new File(usb_path+"/0").setExecutable(true,false);
+			new File(usb_path+"/0").setReadable(true,false);
+			new File(usb_path+"/0").setWritable(true,false);
+			new File(usb_path+"/1").setExecutable(true,false);
+			new File(usb_path+"/1").setReadable(true,false);
+			new File(usb_path+"/1").setWritable(true,false);
 		 }
 		
 		return false;		
@@ -400,6 +409,12 @@ public class Main extends Activity {
 			new File(usb_path).mkdir();
 			new File(usb_path+"/0").mkdir();
 			new File(usb_path+"/1").mkdir();
+			new File(usb_path+"/0").setExecutable(true,false);
+			new File(usb_path+"/0").setReadable(true,false);
+			new File(usb_path+"/0").setWritable(true,false);
+			new File(usb_path+"/1").setExecutable(true,false);
+			new File(usb_path+"/1").setReadable(true,false);
+			new File(usb_path+"/1").setWritable(true,false);
 		}catch(Exception e) {}
 		
 		if(usbservicetimer == null) {
@@ -416,19 +431,18 @@ public class Main extends Activity {
 							if(USB_PAGE != Constants.USB_PAGE) {
 								USB_PAGE = Constants.USB_PAGE;
 								if(new File(usb_path + "/"+USB_PAGE+"/lcd4android.html").exists()) {
-									BufferedReader usb_file = new BufferedReader(new FileReader("/storage/sdcard1/Android/data/eu.webnitro.lcd4android/files/0/lcd4android.html"));
+									BufferedReader usb_file = new BufferedReader(new FileReader(usb_path + "/"+USB_PAGE+"/lcd4android.html"));
 									StringBuffer stringBuffer = new StringBuffer(); 
 									String inputString;
 									while ((inputString = usb_file.readLine()) != null) {
 										stringBuffer.append(inputString + "\n");
 									}
 									usb_file.close();
-									web.loadData(stringBuffer.toString(), "text/html", "utf-8");						
+									web.loadDataWithBaseURL("file:///"+usb_path + "/"+USB_PAGE+"/", stringBuffer.toString(), "text/html", "utf-8", null);
 								}
-							}							
-						} catch (IOException e) {
-							e.printStackTrace();
-						} catch (InterruptedException e) {
+							}	
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -437,6 +451,7 @@ public class Main extends Activity {
 			};
 			usbservicetimer.start();
 		}
+
 	}
 
 	
